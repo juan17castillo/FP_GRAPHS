@@ -58,8 +58,6 @@ public class GraphAdjacencyList<K, V, A> implements IGraph<K, V, A>  {
 	}
 	
 	
-	
-	
 	public void addEdge( K idVertexSource, K idVertexEnd, A infoEdge)throws VertexDoesnotExistException, EdgeExistException
 	{
 		Vertex<K, V, A> vertexSource = getVertex( idVertexSource );
