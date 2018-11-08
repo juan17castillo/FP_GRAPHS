@@ -120,7 +120,6 @@ public class GraphAdjacencyList<K, V, A> implements IGraph<K, V, A>  {
 	
 	public List<List<Edge<K, V, A>>> getAdjacencyList( ){
 		List<List<Edge<K, V, A>>> vs = new ArrayList<List<Edge<K, V, A>>>( );
-		
 		for( Vertex<K, V, A> v : vertexList.values( ) )
 		{
 		vs.add( v.getSucesores() );
