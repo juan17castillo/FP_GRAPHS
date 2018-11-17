@@ -15,7 +15,7 @@ import graphs.util.Exceptions.VertexExistException;
 * @param <V> type of the vertex element
 * @param <A> type of the edge element.
 */
-public class GraphAdjacencyList<K, V, A> implements IGraph<K, V, A>  {
+public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implements IGraph<K, V , A>  {
 	
 	private boolean isDirected;
 	
@@ -125,4 +125,24 @@ public class GraphAdjacencyList<K, V, A> implements IGraph<K, V, A>  {
 	
 		return vs;
 	}
+	
+	
+	public List<Vertex<K, IVertex<K>, IEdge>> dfs(K idv) throws VertexDoesnotExistException{
+		
+		Vertex<K, V, A> vert = vertexList.get( idv );
+		if( vert == null )
+		{
+			throw new VertexDoesnotExistException( "That vertex doesnot Exist", idv );
+		}
+		
+		ArrayList<Vertex<K, IVertex<K>, IEdge>> l= new ArrayList<Vertex<K, IVertex<K>, IEdge>>();
+		
+		vert.dfs(l);
+		
+		return l;
+	}
+	
+	
+	
+	
 }

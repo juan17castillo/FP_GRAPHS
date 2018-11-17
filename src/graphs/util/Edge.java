@@ -6,8 +6,7 @@ package graphs.util;
 	* @param <V> identifier type of the vertex element
 	* @param <A> identifier type of the edge element.
 	*/
-public class Edge<K, V , A >
-	{
+public class Edge<K, V extends IVertex<K> , A extends IEdge > {
 	// -----------------------------------------------------------------
 	// Attributes
 	// -----------------------------------------------------------------
@@ -73,6 +72,14 @@ public class Edge<K, V , A >
 	public Vertex<K, V, A> getSourceVertex( )
 	{
 		return source;
+	}
+
+	public int getWeightDistance() {
+		return infoEdge.getWeightDistance();
+	}
+	
+	public int getWeightCost() {
+		return infoEdge.getWeightCost();
 	}
 	
 }

@@ -6,7 +6,7 @@ import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
 
-public interface IGraph<K, V, A> {
+public interface IGraph<K, V extends IVertex<K>, A extends IEdge> {
 	
 	/**
 	 *  Add a vertex to the graph

@@ -115,11 +115,7 @@ public class GraphAdjacencyMatrix<V>{
 					q.add(list.get(p).get(j));
 					vis[list.get(p).get(j)] = true;
 				}
-			}
-			
-		}
-        for (int i = 0; i < vis.length; i++) {
-			System.out.println(levels[i]);
+			}	
 		}
 	}
 	
