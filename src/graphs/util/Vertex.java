@@ -1,6 +1,9 @@
 package graphs.util;
 
+import java.awt.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import graphs.util.Exceptions.EdgeDoesnotExistException;
 import graphs.util.Exceptions.EdgeExistException;
@@ -11,7 +14,7 @@ import graphs.util.Exceptions.EdgeExistException;
 * @param <V> type of the vertex element
 * @param <A> type of the edge element.
 */
-public class Vertex<K, V , A >{
+public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 	
 	// -----------------------------------------------------------------
 	// Atributos
@@ -186,6 +189,26 @@ public class Vertex<K, V , A >{
 		return successors.size( );
 	}
 
+
+	
+	public void dfs( ArrayList<Vertex<K, IVertex<K>, IEdge>> l )
+	{
+	
+		check();
+		
+		for( Edge<K, V, A> arco : successors )
+		{
+			Vertex<K, V, A> vert = arco.getEndVertex();
+			if( !vert.isChecked() )
+			{
+				vert.dfs( l );
+			}
+		}
+		
+		l.add((Vertex<K, IVertex<K>, IEdge>) this);
+	}
 	
 
+	
+	
 }

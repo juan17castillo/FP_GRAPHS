@@ -43,7 +43,6 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import model.Player;
 
 
 public class MainViewController implements Initializable, MapComponentInitializedListener{
