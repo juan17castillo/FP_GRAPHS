@@ -11,4 +11,5 @@ public class Aeroline {
 	private HashMap<String, Flight > flights;
 	private GraphAdjacencyList<Integer, City, Flight> tourList;
 	private GraphAdjacencyMatrix<City> tourMatrix;
+	
 }

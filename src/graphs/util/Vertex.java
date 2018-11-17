@@ -193,7 +193,6 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 	
 	public void dfs( ArrayList<Vertex<K, IVertex<K>, IEdge>> l )
 	{
-	
 		check();
 		
 		for( Edge<K, V, A> arco : successors )
