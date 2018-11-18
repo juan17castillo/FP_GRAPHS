@@ -24,4 +24,21 @@ public class City implements IVertex<Integer>{
 		return id;
 	}
 
+
+	public String getName() {
+		return name;
+	}
+
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+
+	public double getLongitude() {
+		return longitude;
+	}
+	
+	
+
 }

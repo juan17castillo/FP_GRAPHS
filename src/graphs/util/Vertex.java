@@ -191,7 +191,7 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 
 
 	
-	public void dfs( ArrayList<Vertex<K, IVertex<K>, IEdge>> l )
+	public void dfs( ArrayList<V> l )
 	{
 		check();
 		
@@ -204,7 +204,7 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 			}
 		}
 		
-		l.add((Vertex<K, IVertex<K>, IEdge>) this);
+		l.add(this.getInfoVertex());
 	}
 	
 
