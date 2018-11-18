@@ -25,7 +25,7 @@ public class GraphAdjacencyMatrix<V>{
 	}
 	
 	public void addVertex(V element) throws VertexExistException {
-		if(hash.contains(element))
+		if(hash.containsKey(element))
 		{
 			throw new VertexExistException("Vertex already exist", element);
 		}
@@ -173,5 +173,10 @@ public class GraphAdjacencyMatrix<V>{
 	public DynamicMatrix getMatrix()
 	{
 		return matrix;
+	}
+	
+	public int[] getLevels()
+	{
+		return levels;
 	}
 }
