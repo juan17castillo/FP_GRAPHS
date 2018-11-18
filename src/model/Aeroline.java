@@ -12,4 +12,20 @@ public class Aeroline {
 	private GraphAdjacencyList<Integer, City, Flight> tourList;
 	private GraphAdjacencyMatrix<City> tourMatrix;
 	
+	
+	
+	
+	public void setCostMode() {
+		for (Flight f : flights.values()) {
+			f.setCostMode(true);
+			f.setDistanceMode(false);
+		}
+	}
+	
+	public void setDistanceMode() {
+		for (Flight f : flights.values()) {
+			f.setCostMode(false);
+			f.setDistanceMode(true);
+		}
+	}
 }
