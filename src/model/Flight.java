@@ -11,7 +11,8 @@ public class Flight implements IEdge, Comparable<Flight>{
 	private String name;
 	private boolean costMode;
 	private boolean distanceMode;
-
+	private int idFrom;
+	private int idTo;
 	
 	
 	public Flight(double distance, double cost, String name) {
@@ -66,6 +67,26 @@ public class Flight implements IEdge, Comparable<Flight>{
 
 	public void setDistanceMode(boolean distanceMode) {
 		this.distanceMode = distanceMode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getIdFrom() {
+		return idFrom;
+	}
+
+	public void setIdFrom(int idFrom) {
+		this.idFrom = idFrom;
+	}
+
+	public int getIdTo() {
+		return idTo;
+	}
+
+	public void setIdTo(int idTo) {
+		this.idTo = idTo;
 	}
 	
 	

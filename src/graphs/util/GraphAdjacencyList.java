@@ -122,6 +122,7 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 	
 	public List<List<Edge<K, V, A>>> getAdjacencyList( ){
 		List<List<Edge<K, V, A>>> vs = new ArrayList<List<Edge<K, V, A>>>( );
+	
 		for( Vertex<K, V, A> v : vertexList.values( ) )
 		{
 		vs.add( v.getSucesores() );

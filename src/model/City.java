@@ -10,7 +10,7 @@ public class City implements IVertex<Integer>{
 	private double longitude;
 	
 	
-	public City(Integer id, String name, double latitude, double longitude) {
+	public City(String name, Integer id,  double latitude, double longitude) {
 		super();
 		this.id = id;
 		this.name = name;
