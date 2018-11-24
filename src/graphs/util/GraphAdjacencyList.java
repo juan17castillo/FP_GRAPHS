@@ -61,7 +61,11 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 	public void addEdge( K idVertexSource, K idVertexEnd, A infoEdge)throws VertexDoesnotExistException, EdgeExistException
 	{
 		Vertex<K, V, A> vertexSource = getVertex( idVertexSource );
-		Vertex<K, V, A> vertexEnd = getVertex( idVertexEnd );		
+		Vertex<K, V, A> vertexEnd = getVertex( idVertexEnd );	
+		if( containsEdge(idVertexSource, idVertexEnd))
+		{
+			throw new EdgeExistException( "That edge already Exist", idVertexSource, idVertexEnd );
+		}
 		
 		if(isDirected) {
 		Edge<K, V, A> edge = new Edge<K, V, A>( vertexSource, vertexEnd, infoEdge );
@@ -118,6 +122,7 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 	
 	public List<List<Edge<K, V, A>>> getAdjacencyList( ){
 		List<List<Edge<K, V, A>>> vs = new ArrayList<List<Edge<K, V, A>>>( );
+	
 		for( Vertex<K, V, A> v : vertexList.values( ) )
 		{
 		vs.add( v.getSucesores() );
@@ -127,7 +132,7 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 	}
 	
 	
-	public List<Vertex<K, IVertex<K>, IEdge>> dfs(K idv) throws VertexDoesnotExistException{
+	public List<V> dfs(K idv) throws VertexDoesnotExistException{
 		
 		Vertex<K, V, A> vert = vertexList.get( idv );
 		if( vert == null )
@@ -135,12 +140,15 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 			throw new VertexDoesnotExistException( "That vertex doesnot Exist", idv );
 		}
 		
-		ArrayList<Vertex<K, IVertex<K>, IEdge>> l= new ArrayList<Vertex<K, IVertex<K>, IEdge>>();
+		ArrayList<V> l= new ArrayList<V>();
 		
 		vert.dfs(l);
 		
 		return l;
 	}
+	
+	
+	
 	
 	
 	

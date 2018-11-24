@@ -22,8 +22,17 @@ import com.lynden.gmapsfx.service.directions.TravelModes;
 import com.lynden.gmapsfx.shapes.Polyline;
 import com.lynden.gmapsfx.shapes.PolylineOptions;
 
+
 import java.net.URL;
 import java.util.ArrayList;
+
+import graphs.util.Vertex;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -44,8 +53,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
+import model.Aeroline;
+import model.City;
+import model.Flight;
+
 
 public class MainViewController implements Initializable, MapComponentInitializedListener{
+
+
+	
+	private Aeroline a;
+	
 
     @FXML
     private GoogleMapView mapView;
@@ -162,8 +180,9 @@ public class MainViewController implements Initializable, MapComponentInitialize
     public void initialize(URL url, ResourceBundle rb) {
         mapView.addMapInializedListener(this);
         markers = new ArrayList<Marker>();
-        
-       
+        mapView.setKey("AIzaSyBRKd40k8kiVyiLs5EVjl_yUYFmIt-2CHI");
+
+    	a = new Aeroline();
     	
     }
     
@@ -195,7 +214,11 @@ public class MainViewController implements Initializable, MapComponentInitialize
         MVCArray mvc = new MVCArray(ary);
         PolylineOptions polyOpts = new PolylineOptions()
                 .path(mvc)
+
                 .strokeColor("blue")
+
+                .strokeColor("white")
+
                 .strokeWeight(1);
 
         Polyline poly = new Polyline(polyOpts);
@@ -213,8 +236,12 @@ public class MainViewController implements Initializable, MapComponentInitialize
                 .zoomControl(true)
                 .zoom(2)
                 .overviewMapControl(false)
+
                 .mapType(MapTypeIdEnum.ROADMAP);
         map = mapView.createMap(options);
+                .mapTypeControl(false);
+        map = mapView.createMap(options);
+        
     
         //Add a marker to the map
         MarkerOptions markerOptions = new MarkerOptions();
@@ -222,6 +249,22 @@ public class MainViewController implements Initializable, MapComponentInitialize
         addMarker(new LatLong(3.42158, -76.5205), "Cali");
         addMarker(new LatLong(41.3922500, 2.1648800), "Barcelona");
 
+        
+        for( City c : a.getCities().values( ) )
+        {
+            addMarker(new LatLong(c.getLatitude(), c.getLongitude()), c.getName());
+        }
+
+        
+        
+        for( Flight f : a.getFlights().values( ) )
+		{
+        	City from = a.getCities().get(f.getIdFrom());
+        	City to = a.getCities().get(f.getIdTo());
+        	System.out.println("Aristica "+from.getName()+" a "+to.getName());
+        	addLine(new LatLong(from.getLatitude(),from.getLongitude()), 
+        			new LatLong(to.getLatitude(), to.getLongitude()));
+		}
         addLine(new LatLong(3.42158, -76.5205), (new LatLong(41.3922500, 2.1648800)));
    
     }
