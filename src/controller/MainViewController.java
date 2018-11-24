@@ -205,7 +205,7 @@ public class MainViewController implements Initializable, MapComponentInitialize
     	Marker marker = new Marker( markerOptions );
     	map.addMarker(marker);
     	markers.add(marker);
-    	System.out.println("Added "+name);
+
     }
     
     
@@ -215,7 +215,7 @@ public class MainViewController implements Initializable, MapComponentInitialize
         PolylineOptions polyOpts = new PolylineOptions()
                 .path(mvc)
 
-                .strokeColor("blue")
+                
 
                 .strokeColor("white")
 
@@ -236,18 +236,12 @@ public class MainViewController implements Initializable, MapComponentInitialize
                 .zoomControl(true)
                 .zoom(2)
                 .overviewMapControl(false)
-
-                .mapType(MapTypeIdEnum.ROADMAP);
-        map = mapView.createMap(options);
                 .mapTypeControl(false);
         map = mapView.createMap(options);
         
     
         //Add a marker to the map
         MarkerOptions markerOptions = new MarkerOptions();
-        
-        addMarker(new LatLong(3.42158, -76.5205), "Cali");
-        addMarker(new LatLong(41.3922500, 2.1648800), "Barcelona");
 
         
         for( City c : a.getCities().values( ) )

@@ -147,7 +147,7 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 
 	/**
 	* Add a new edge to the vertex
-	* @param Edge to add
+	* @param Edg to add
 	* @throws EdgeExistsException Generates if the edge already exists
 	*/
 	public void addEdge( Edge<K, V, A> edge ) throws EdgeExistException

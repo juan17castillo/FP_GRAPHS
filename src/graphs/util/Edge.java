@@ -6,7 +6,7 @@ package graphs.util;
 	* @param <V> identifier type of the vertex element
 	* @param <A> identifier type of the edge element.
 	*/
-public class Edge<K, V extends IVertex<K> , A extends IEdge > {
+public class Edge<K, V extends IVertex<K> , A extends IEdge > implements Comparable<Edge<K, V, A>>{
 	// -----------------------------------------------------------------
 	// Attributes
 	// -----------------------------------------------------------------
@@ -81,5 +81,15 @@ public class Edge<K, V extends IVertex<K> , A extends IEdge > {
 	public int getWeightCost() {
 		return infoEdge.getWeightCost();
 	}
-	
+
+	@Override
+	public int compareTo(Edge<K, V, A> o) {
+		// TODO Auto-generated method stub
+		return getWeightCost()-o.getWeightCost();
+	}
+	@Override
+	public String toString()
+	{
+		return source.getId()+"->"+end.getId()+": "+getWeightCost();
+	}
 }

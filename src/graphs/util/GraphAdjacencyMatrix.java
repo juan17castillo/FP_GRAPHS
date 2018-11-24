@@ -1,6 +1,7 @@
 package graphs.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -9,11 +10,13 @@ import java.util.Queue;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
+import test.Edge1;
 import graphs.util.Pair;
 
-public class GraphAdjacencyMatrix<V>{
+public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> implements IGraph<K, V, A>{
 
-	private Hashtable<V, Integer> hash;
+	private Hashtable<K, V> hashVertex;
+	private Hashtable<K, Integer> hashKeys;
 	private DynamicMatrix matrix;
 	private boolean isDirected;
 	private int[] levels, lessDistance;
@@ -21,73 +24,75 @@ public class GraphAdjacencyMatrix<V>{
 	public GraphAdjacencyMatrix(boolean is) {
 		isDirected = is;
 		matrix = new DynamicMatrix();
-		hash = new Hashtable<>();
+		hashVertex = new Hashtable<>();
+		hashKeys = new Hashtable<>();
 	}
-	
-	public void addVertex(V element) throws VertexExistException {
-		if(hash.containsKey(element))
+	@Override
+	public void addVertex(V element, K key) throws VertexExistException {
+		if(hashVertex.containsKey(key))
 		{
 			throw new VertexExistException("Vertex already exist", element);
 		}
 		else
 		{
-			hash.put(element, matrix.addElement());
-			
+			hashVertex.put(element.getId(), element);
+			hashKeys.put(key, matrix.addElement());
 		}
 		
 	}
 
-	
-	public void addEdge(V VertexSource, V VertexEnd, int infoEdge)
+	@Override
+	public void addEdge(K IdVertexSource, K IdVertexEnd, A infoEdge)
 			throws VertexDoesnotExistException, EdgeExistException {
-		if(!hash.containsKey(VertexSource))
+		if(!hashVertex.containsKey(IdVertexSource))
 		{
-			throw new VertexDoesnotExistException("Vertex doesn't exist", VertexSource);
+			throw new VertexDoesnotExistException("Vertex doesn't exist", IdVertexSource);
 		}
-		if(!hash.containsKey(VertexEnd))
+		if(!hashVertex.containsKey(IdVertexEnd))
 		{
-			throw new VertexDoesnotExistException("Vertex doesn't exist", VertexEnd);
+			throw new VertexDoesnotExistException("Vertex doesn't exist", IdVertexEnd);
 		}
-		if(matrix.get(hash.get(VertexSource), hash.get(VertexEnd))!=0)
+		if(matrix.get(hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd))!=0)
 		{
-			throw new EdgeExistException("Edge already exist", VertexEnd, VertexEnd);
+			throw new EdgeExistException("Edge already exist", IdVertexEnd, IdVertexEnd);
 		}
-		matrix.add(infoEdge, hash.get(VertexSource), hash.get(VertexEnd));
+		matrix.add(infoEdge.getWeightCost(), hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd));
 		if(!isDirected)
 		{
-			matrix.add(infoEdge, hash.get(VertexEnd), hash.get(VertexSource));
+			matrix.add(infoEdge.getWeightCost(), hashKeys.get(IdVertexEnd), hashKeys.get(IdVertexSource));
 		}
 		
 	}
 
-	
+	@Override
 	public void clear() {
-		hash.clear();
+		hashVertex.clear();
+		hashKeys.clear();
 		matrix = new DynamicMatrix();
 		
 	}
 
-	
-	public boolean containsVertex(V Vertex) {
-		return hash.containsKey(Vertex);
+	@Override
+	public boolean containsVertex(K Vertex) {
+		return hashVertex.containsKey(Vertex);
 		
 	}
 
-	
-	public boolean containsEdge(V VertexSource, V VertexEnd) throws VertexDoesnotExistException {
-		if(!hash.containsKey(VertexSource))
+	@Override
+	public boolean containsEdge(K VertexSource, K VertexEnd) throws VertexDoesnotExistException {
+		if(!hashVertex.containsKey(VertexSource))
 		{
 			throw new VertexDoesnotExistException("Vertex doesn't exist", VertexSource);
 		}
-		if(!hash.containsKey(VertexEnd))
+		if(!hashVertex.containsKey(VertexEnd))
 		{
 			throw new VertexDoesnotExistException("Vertex doesn't exist", VertexEnd);
 		}
-		return matrix.get(hash.get(VertexSource), hash.get(VertexEnd))!=0;
+		return matrix.get(hashKeys.get(VertexSource), hashKeys.get(VertexEnd))!=0;
 		
 	}
 
-	public void BFS(V s)
+	public void BFS(K s)
 	{
 		levels = new int[matrix.getDimension()];
 		ArrayList<ArrayList<Integer>> list = new ArrayList<>();
@@ -105,9 +110,9 @@ public class GraphAdjacencyMatrix<V>{
 		}
 		Queue<Integer> q = new LinkedList<Integer>();
         boolean[] vis = new boolean[matrix.getDimension()];
-        levels[hash.get(s)] = 0;
-        vis[hash.get(s)] = true;
-        q.add(hash.get(s));
+        levels[hashKeys.get(s)] = 0;
+        vis[hashKeys.get(s)] = true;
+        q.add(hashKeys.get(s));
         while(!q.isEmpty()) {
         	int p = q.poll();
         	for (int j = 0; j < list.get(p).size(); j++) {
@@ -121,7 +126,7 @@ public class GraphAdjacencyMatrix<V>{
 		}
 	}
 	
-	public void Dijkstra(V k)
+	public void Dijkstra(K k)
 	{
 		ArrayList<ArrayList<Pair<Integer, Integer>>> list = new ArrayList<>();
 		for (int i = 0; i < matrix.getDimension(); i++) {
@@ -140,9 +145,9 @@ public class GraphAdjacencyMatrix<V>{
 			lessDistance[i] = (int)Math.pow(10, 9);
 		}
 		boolean[] vis = new boolean[matrix.getDimension()];
-		lessDistance[hash.get(k)] = 0;
+		lessDistance[hashKeys.get(k)] = 0;
 		PriorityQueue<Pair<Integer, Integer>> cola = new PriorityQueue<>();
-		cola.add(new Pair<Integer, Integer>(0, hash.get(k)));
+		cola.add(new Pair<Integer, Integer>(0, hashKeys.get(k)));
 		while(!cola.isEmpty())
 		{
 			Pair<Integer, Integer> pair = cola.poll();
@@ -161,13 +166,50 @@ public class GraphAdjacencyMatrix<V>{
 				}
 			}
 		}
-//		for (int i = 0; i < vis.length; i++) {
-//			System.out.println(lessDistance[i]);
-//		}
 	}
 	
+	public ArrayList<Edge1> kruskalMST(){
+		ArrayList<Edge1> graphEdges = new ArrayList<>();
+		if(isDirected)
+		{
+			for (int i = 0; i < matrix.getDimension(); i++) {
+				for (int j = 0; j < matrix.getDimension(); j++) {
+					if(matrix.get(i, j)!=0)
+					{
+						graphEdges.add(new Edge1(i, j, matrix.get(i, j)));
+					}
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < matrix.getDimension(); i++) {
+				for (int j = i; j < matrix.getDimension(); j++) {
+					if(matrix.get(i, j)!=0)
+					{
+						graphEdges.add(new Edge1(i, j, matrix.get(i, j)));
+					}
+				}
+			}
+		}
+		
+		Collections.sort(graphEdges);
+		ArrayList<Edge1> mstEdges = new ArrayList<>();
+		DisjointSet nodeSet = new DisjointSet(matrix.getDimension()+1);
+		for(int i=0; i<graphEdges.size() && mstEdges.size()<(matrix.getDimension()-1); i++){
+			Edge1 currentEdge = graphEdges.get(i);
+			int root1 = nodeSet.find(currentEdge.getVertex1());
+			int root2 = nodeSet.find(currentEdge.getVertex2());
+			if(root1 != root2){
+				mstEdges.add(currentEdge);
+				nodeSet.union(root1, root2);
+			}
+		}
+		return mstEdges;
+	}
+	@Override
 	public boolean isEmpty() {
-		return hash.isEmpty();
+		return hashVertex.isEmpty();
 	}
 
 	public DynamicMatrix getMatrix()
@@ -178,5 +220,10 @@ public class GraphAdjacencyMatrix<V>{
 	public int[] getLevels()
 	{
 		return levels;
+	}
+	
+	public int[] getLessDistance()
+	{
+		return lessDistance;
 	}
 }

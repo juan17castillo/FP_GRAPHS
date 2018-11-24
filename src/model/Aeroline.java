@@ -21,7 +21,7 @@ public class Aeroline {
 	private HashMap<Integer, City> cities;
 	private HashMap<String, Flight > flights;
 	private GraphAdjacencyList<Integer, City, Flight> tourList;
-	private GraphAdjacencyMatrix<City> tourMatrix;
+	private GraphAdjacencyMatrix<Integer, City, Flight> tourMatrix;
 	
 	public Aeroline() {
 		cities = new HashMap<Integer, City>();
@@ -48,7 +48,7 @@ public class Aeroline {
 				
 				cities.put(c.getId(), c);
 				tourList.addVertex(c, Integer.parseInt(s[1]));
-				tourMatrix.addVertex(c);
+				tourMatrix.addVertex(c, Integer.parseInt(s[1]));
 				
 				System.out.println("Agregado "+c.getName());
 			}
@@ -130,7 +130,7 @@ public class Aeroline {
 	}
 
 
-	public GraphAdjacencyMatrix<City> getTourMatrix() {
+	public GraphAdjacencyMatrix<Integer, City, Flight> getTourMatrix() {
 		return tourMatrix;
 	}
 	
