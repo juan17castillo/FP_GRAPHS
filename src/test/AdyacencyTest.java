@@ -199,7 +199,7 @@ class AdyacencyTest {
 		ArrayList<Edge<Character, Vert, Edg>> l = g.kruskalMST();
 		int s = 0;
 		for (int i = 0; i < l.size(); i++) {
-			s+=l.get(i).getWeightCost();
+			s+=l.get(i).getWeight();
 		}
 		assertEquals(1081, s);
 	}

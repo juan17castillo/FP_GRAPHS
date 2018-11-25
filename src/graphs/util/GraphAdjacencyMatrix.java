@@ -10,7 +10,6 @@ import java.util.Queue;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
-import test.Edge1;
 import graphs.util.Pair;
 
 public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> implements IGraph<K, V, A>{
@@ -56,10 +55,10 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		{
 			throw new EdgeExistException("Edge already exist", IdVertexEnd, IdVertexEnd);
 		}
-		matrix.add(infoEdge.getWeightCost(), hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd));
+		matrix.add(infoEdge.getWeight(), hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd));
 		if(!isDirected)
 		{
-			matrix.add(infoEdge.getWeightCost(), hashKeys.get(IdVertexEnd), hashKeys.get(IdVertexSource));
+			matrix.add(infoEdge.getWeight(), hashKeys.get(IdVertexEnd), hashKeys.get(IdVertexSource));
 		}
 		
 	}

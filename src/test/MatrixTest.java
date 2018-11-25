@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import graphs.util.Edge;
+import graphs.util.Edge1;
 import graphs.util.GraphAdjacencyMatrix;
 import graphs.util.Vertex;
 import graphs.util.Exceptions.EdgeExistException;

@@ -9,14 +9,20 @@ public class Edg implements IEdge{
 	{
 		weight = cost;
 	}
+	
 	@Override
-	public int getWeightDistance() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(Object o) {
+		Edg g = (Edg) o;
+		return weight-g.getWeight();
+	}
+	@Override
+	public int compareTo(IEdge a) {
+		Edg g = (Edg) a;
+		return weight-g.getWeight();
 	}
 
 	@Override
-	public int getWeightCost() {
+	public int getWeight() {
 		// TODO Auto-generated method stub
 		return weight;
 	}

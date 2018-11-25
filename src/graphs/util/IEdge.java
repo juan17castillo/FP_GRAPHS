@@ -1,10 +1,12 @@
 package graphs.util;
 
-public interface IEdge {
+import model.Flight;
 
-	public int getWeightDistance( );
+public interface IEdge<K, V extends IVertex<K> , A extends IEdge > extends Comparable<A>{
+
+	public int getWeight( );
 	
-	public int getWeightCost( );
+	int compareTo(A a);
 
 	
 

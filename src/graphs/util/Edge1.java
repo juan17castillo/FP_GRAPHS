@@ -1,4 +1,4 @@
-package test;
+package graphs.util;
 
 public class Edge1 implements Comparable<Edge1>{
 	private int vertex1;	//an edge has 2 vertices & a weight

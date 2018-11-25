@@ -7,9 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-
+import graphs.util.Edge;
+import graphs.util.Edge1;
 import graphs.util.GraphAdjacencyList;
 import graphs.util.GraphAdjacencyMatrix;
 import graphs.util.Exceptions.EdgeExistException;
@@ -70,6 +72,10 @@ public class Aeroline {
 					flights.put(f.getName(), f);
 					tourList.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), 
 							f);
+					
+					tourMatrix.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), 
+							f);
+					
 					f.setIdFrom(Integer.parseInt(s[1])); f.setIdTo(Integer.parseInt(s[2]));
 					System.out.println("Agregado "+f.getName());
 
@@ -133,6 +139,31 @@ public class Aeroline {
 	public GraphAdjacencyMatrix<Integer, City, Flight> getTourMatrix() {
 		return tourMatrix;
 	}
+		
+	
+	public ArrayList<Flight> mstAdyacency(){
+		ArrayList<Edge<Integer, City, Flight>> e = tourList.kruskalMST();
+		ArrayList<Flight> s= new ArrayList<>(); 
+		for (int i = 0; i < e.size(); i++) {
+			s.add(e.get(i).getInfoEdge());
+		}
+		
+		return s;
+	}
+	
+	
+	public ArrayList<Flight> mstMatrix(){
+		ArrayList<Edge1> e = tourMatrix.kruskalMST();
+		ArrayList<Flight> s= new ArrayList<>(); 
+		for (int i = 0; i < e.size(); i++) {
+			Flight f = new Flight(e.get(i).getWeight(), e.get(i).getWeight(), "");
+			f.setIdFrom(e.get(i).getVertex1()); f.setIdTo(e.get(i).getVertex2());
+			s.add(f);
+		}
+		
+		return s;
+	}
+	
 	
 	
 }

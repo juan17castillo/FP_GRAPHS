@@ -74,22 +74,21 @@ public class Edge<K, V extends IVertex<K> , A extends IEdge > implements Compara
 		return source;
 	}
 
-	public int getWeightDistance() {
-		return infoEdge.getWeightDistance();
-	}
-	
-	public int getWeightCost() {
-		return infoEdge.getWeightCost();
+	public int getWeight() {
+		return infoEdge.getWeight();
 	}
 
-	@Override
-	public int compareTo(Edge<K, V, A> o) {
-		// TODO Auto-generated method stub
-		return getWeightCost()-o.getWeightCost();
-	}
+	
+	
+
 	@Override
 	public String toString()
 	{
-		return source.getId()+"->"+end.getId()+": "+getWeightCost();
+		return source.getId()+"->"+end.getId()+": "+getWeight();
+	}
+
+	@Override
+	public int compareTo(Edge<K, V, A> arg0) {
+		return infoEdge.compareTo(arg0.getInfoEdge());
 	}
 }

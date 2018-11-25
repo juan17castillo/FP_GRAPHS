@@ -11,7 +11,6 @@ import java.util.PriorityQueue;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
-import test.Edge1;
 
 /**
 * Represents the graph
@@ -163,7 +162,7 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 		for (int i = 0; i < vertexList.size(); i++) {
 			for (int j = 0; j < lis.get(i).size(); j++) {
 				list.get(hash.get(lis.get(i).get(0).getSourceVertex().getId()))
-				.add(new Pair<Integer, Integer>(lis.get(i).get(j).getInfoEdge().getWeightCost(), 
+				.add(new Pair<Integer, Integer>(lis.get(i).get(j).getInfoEdge().getWeight(), 
 				hash.get(lis.get(i).get(j).getEndVertex().getId())));
 			}
 		}
