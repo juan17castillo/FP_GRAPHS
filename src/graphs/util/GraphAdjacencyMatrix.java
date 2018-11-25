@@ -129,7 +129,7 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		}
 	}
 	
-	public void Dijkstra(K k)
+	public Hashtable<K, Vertex<K, V, A>> Dijkstra(K k)
 	{
 		ArrayList<ArrayList<Pair<Integer, Integer>>> list = new ArrayList<>();
 		for (int i = 0; i < matrix.getDimension(); i++) {
@@ -147,28 +147,31 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		for (int i = 0; i < lessDistance.length; i++) {
 			lessDistance[i] = (int)Math.pow(10, 9);
 		}
-		boolean[] vis = new boolean[matrix.getDimension()];
 		lessDistance[hashKeys.get(k)] = 0;
-		PriorityQueue<Pair<Integer, Integer>> cola = new PriorityQueue<>();
-		cola.add(new Pair<Integer, Integer>(0, hashKeys.get(k)));
+		PriorityQueue<Pair<Integer, K>> cola = new PriorityQueue<>();
+		cola.add(new Pair<Integer, K>(0, k));
 		while(!cola.isEmpty())
 		{
-			Pair<Integer, Integer> pair = cola.poll();
-			int x = pair.getValue();
-			if(!vis[x])
+			Pair<Integer, K> pair = cola.poll();
+			int x = hashKeys.get(pair.getValue());
+			if(!hashVertex.get(pair.getValue()).isChecked())
 			{
-				vis[x] = true;
+				hashVertex.get(pair.getValue()).check();
 				for (int i = 0; i < list.get(x).size(); i++) {
 					int e = list.get(x).get(i).getValue();
 					int w = list.get(x).get(i).getKey();
 					if(lessDistance[x] + w < lessDistance[e])
 					{
+						
+						hashVertex.get(hashIndex.get(e)).setPred(hashVertex.get(hashIndex.get(x)));
 						lessDistance[e] = lessDistance[x] + w;
-						cola.add(new Pair<Integer, Integer>(lessDistance[e], e));
+						cola.add(new Pair<Integer, K>(lessDistance[e], hashIndex.get(e)));
 					}
 				}
 			}
 		}
+		uncheckAll();
+		return hashVertex;
 	}
 	
 	public ArrayList<Edge<K, V, A>> kruskalMST(){
@@ -231,5 +234,13 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 	public int[] getLessDistance()
 	{
 		return lessDistance;
+	}
+	
+	private void uncheckAll( )
+	{
+		for( Vertex<K, V, A> vertex : hashVertex.values( ) )
+		{
+			vertex.uncheck( );
+		}
 	}
 }

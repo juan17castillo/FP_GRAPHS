@@ -7,6 +7,7 @@ import java.util.Queue;
 
 import graphs.util.Exceptions.EdgeDoesnotExistException;
 import graphs.util.Exceptions.EdgeExistException;
+import test.Vert;
 
 /**
 * Represents a Vertex of the graph
@@ -41,6 +42,7 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 	*/
 	private boolean checked;
 
+	private Vertex<K, V, A> pred;
 	// -----------------------------------------------------------------
 	// Constructores
 	// -----------------------------------------------------------------
@@ -55,6 +57,7 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 		infoVertex = pInfoVertex;
 		successors = new ArrayList<Edge<K, V, A>>( );
 		checked = false;
+		pred = null;
 	}
 
 	// -----------------------------------------------------------------
@@ -208,6 +211,15 @@ public class Vertex<K, V extends IVertex<K> , A extends IEdge>{
 	}
 	
 
+	public void setPred(Vertex<K, V, A> p)
+	{
+		pred = p;
+	}
+	
+	public Vertex<K, V, A> getPred()
+	{
+		return pred;
+	}
 	
 	
 }

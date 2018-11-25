@@ -24,10 +24,12 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 	private int[] lessDistance;
 	private HashMap<K, Vertex<K, V, A>> vertexList;
 	private Hashtable<K, Integer> hash;
+	private Hashtable<Integer, K> hashIndex;
 	public GraphAdjacencyList(boolean isDirected) {
 		vertexList = new HashMap<K, Vertex<K, V, A>>( );
 		this.isDirected = isDirected;
 		hash = new Hashtable<>();
+		hashIndex = new Hashtable<>();
 	}
 	
 	
@@ -59,6 +61,7 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 			Vertex<K, V, A> vertex = new Vertex<K, V, A>( element, key );
 			vertexList.put( vertex.getId(), vertex );
 			hash.put(vertex.getId(), vertexList.size()-1);
+			hashIndex.put(hash.get(key), key);
 		}
 	}
 	
@@ -152,7 +155,7 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 		return l;
 	}
 	
-	public void Dijkstra(K k)
+	public HashMap<K, Vertex<K, V, A>> Dijkstra(K k)
 	{
 		ArrayList<ArrayList<Pair<Integer, Integer>>> list = new ArrayList<>();
 		for (int i = 0; i < vertexList.size();i++) {
@@ -170,28 +173,30 @@ public class GraphAdjacencyList<K, V extends IVertex<K>, A extends IEdge> implem
 		for (int i = 0; i < lessDistance.length; i++) {
 			lessDistance[i] = (int)Math.pow(10, 9);
 		}
-		boolean[] vis = new boolean[vertexList.size()];
 		lessDistance[hash.get(k)] = 0;
-		PriorityQueue<Pair<Integer, Integer>> cola = new PriorityQueue<>();
-		cola.add(new Pair<Integer, Integer>(0, hash.get(k)));
+		PriorityQueue<Pair<Integer, K>> cola = new PriorityQueue<>();
+		cola.add(new Pair<Integer, K>(0, k));
 		while(!cola.isEmpty())
 		{
-			Pair<Integer, Integer> pair = cola.poll();
-			int x = pair.getValue();
-			if(!vis[x])
+			Pair<Integer, K> pair = cola.poll();
+			int x = hash.get(pair.getValue());
+			if(!vertexList.get(pair.getValue()).isChecked())
 			{
-				vis[x] = true;
+				vertexList.get(pair.getValue()).check();
 				for (int i = 0; i < list.get(x).size(); i++) {
 					int e = list.get(x).get(i).getValue();
 					int w = list.get(x).get(i).getKey();
 					if(lessDistance[x] + w < lessDistance[e])
 					{
+						vertexList.get(hashIndex.get(e)).setPred(vertexList.get(hashIndex.get(x)));
 						lessDistance[e] = lessDistance[x] + w;
-						cola.add(new Pair<Integer, Integer>(lessDistance[e], e));
+						cola.add(new Pair<Integer, K>(lessDistance[e], hashIndex.get(e)));
 					}
 				}
 			}
 		}
+		uncheckAll();
+		return vertexList;
 	}
 	
 	public ArrayList<Edge<K, V, A>> kruskalMST(){
