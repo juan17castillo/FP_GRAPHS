@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -15,6 +16,7 @@ import graphs.util.GraphAdjacencyMatrix;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
+import test.Edge1;
 
 public class Aeroline {
 	
@@ -29,6 +31,11 @@ public class Aeroline {
 		tourList = new GraphAdjacencyList<>(false);
 		tourMatrix = new GraphAdjacencyMatrix<>(false);
 		loadTourData();
+		ArrayList<Edge1> lis = tourMatrix.kruskalMST();
+		for (int i = 0; i < lis.size(); i++) {
+			System.out.println(lis.get(i));
+		}
+		
 	}
 	
 	
@@ -49,8 +56,6 @@ public class Aeroline {
 				cities.put(c.getId(), c);
 				tourList.addVertex(c, Integer.parseInt(s[1]));
 				tourMatrix.addVertex(c, Integer.parseInt(s[1]));
-				
-				System.out.println("Agregado "+c.getName());
 			}
     		
 			br.close();
@@ -71,8 +76,7 @@ public class Aeroline {
 					tourList.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), 
 							f);
 					f.setIdFrom(Integer.parseInt(s[1])); f.setIdTo(Integer.parseInt(s[2]));
-					System.out.println("Agregado "+f.getName());
-
+					tourMatrix.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), f);
 				}
 	    		
 			br.close();

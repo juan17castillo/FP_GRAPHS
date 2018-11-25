@@ -192,7 +192,6 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 				}
 			}
 		}
-		
 		Collections.sort(graphEdges);
 		ArrayList<Edge1> mstEdges = new ArrayList<>();
 		DisjointSet nodeSet = new DisjointSet(matrix.getDimension()+1);

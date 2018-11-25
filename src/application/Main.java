@@ -23,7 +23,7 @@ public class Main extends Application {
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			principal.setScene(scene);
 			principal.initStyle(StageStyle.UNDECORATED);
-			principal.show();
+//			principal.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		
