@@ -1,6 +1,7 @@
 package test;
 
 import graphs.util.IEdge;
+import graphs.util.IVertex;
 
 public class Edg implements IEdge{
 
@@ -10,13 +11,12 @@ public class Edg implements IEdge{
 		weight = cost;
 	}
 	@Override
-	public int getWeightDistance() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(IEdge a) {
+		return weight-a.getWeight();
 	}
 
 	@Override
-	public int getWeightCost() {
+	public int getWeight() {
 		// TODO Auto-generated method stub
 		return weight;
 	}

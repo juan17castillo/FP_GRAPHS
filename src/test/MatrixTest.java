@@ -202,7 +202,7 @@ class MatrixTest {
 		g.addEdge('I', 'J', new Edg(257));
 		g.addEdge('B', 'G', new Edg(268));
 		g.addEdge('J', 'E', new Edg(399));
-		ArrayList<Edge1> l = g.kruskalMST();
+		ArrayList<Edge<Character, Vert, Edg>> l = g.kruskalMST();
 		int s = 0;
 		for (int i = 0; i < l.size(); i++) {
 			s+=l.get(i).getWeight();

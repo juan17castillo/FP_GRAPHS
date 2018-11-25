@@ -2,9 +2,9 @@ package graphs.util;
 
 import java.util.ArrayList;
 
-public class DynamicMatrix {
+public class DynamicMatrix<K, V extends IVertex<K>, A extends IEdge> {
 
-	private ArrayList<ArrayList<Integer>> matrix;
+	private ArrayList<ArrayList<A>> matrix;
 	private int dimension;
 	
 	public DynamicMatrix()
@@ -17,16 +17,16 @@ public class DynamicMatrix {
 	{
 		matrix.add(new ArrayList<>());
 		for (int i = 0; i < matrix.size(); i++) {
-			matrix.get(matrix.size()-1).add(0);
+			matrix.get(matrix.size()-1).add(null);
 		}
 		for (int i = 0; i < matrix.size()-1; i++) {
-			matrix.get(i).add(0);
+			matrix.get(i).add(null);
 		}
 		dimension++;
 		return matrix.size()-1;
 		
 	}
-	public void add(int k, int i, int j) throws IndexOutOfBoundsException
+	public void add(A k, int i, int j) throws IndexOutOfBoundsException
 	{
 		if(i>dimension-1||j>dimension-1)
 		{
@@ -39,7 +39,7 @@ public class DynamicMatrix {
 		}
 	}
 	
-	public int get(int i, int j) throws IndexOutOfBoundsException
+	public A get(int i, int j) throws IndexOutOfBoundsException
 	{
 		if(i>matrix.size()-1||j>matrix.get(0).size()-1)
 		{
@@ -69,7 +69,9 @@ public class DynamicMatrix {
 	{
 		for (int i = 0; i < dimension; i++) {
 			for (int j = 0; j < dimension; j++) {
-				System.out.print(get(i, j)+ " ");
+				if(get(i, j)!=null)
+				System.out.print(get(i, j).getWeight()+ " ");
+				else System.out.print("0"+" ");
 			}
 			System.out.println();
 		}

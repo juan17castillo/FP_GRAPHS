@@ -4,7 +4,7 @@ import graphs.util.Edge;
 import graphs.util.IEdge;
 import graphs.util.IVertex;
 
-public class Flight implements IEdge, Comparable<Flight>{
+public class Flight implements IEdge{
 
 	private double distance;
 	private double cost;
@@ -22,18 +22,15 @@ public class Flight implements IEdge, Comparable<Flight>{
 		this.name = name;
 	}
 
-	@Override
 	public int getWeightDistance() {
 		return (int) distance;
 	}
 
-	@Override
 	public int getWeightCost() {
 		return (int) cost;
 	}
 
-	@Override
-	public int compareTo(Flight o) {
+	public int compare(Flight o) {
 
 		if(costMode) {
 			
@@ -88,7 +85,25 @@ public class Flight implements IEdge, Comparable<Flight>{
 	public void setIdTo(int idTo) {
 		this.idTo = idTo;
 	}
+
+	@Override
+	public int compareTo(Object o) {
+		return compare((Flight)o);
+	}
+
+	@Override
+	public int compareTo(IEdge a) {
+		return compare((Flight) a);
+	}
 	
+	public int getWeight(){
+		
+		if(costMode) {
+			return (int) cost;
+		}else {
+			return (int) distance;
+		}
+	}
 	
 
 	

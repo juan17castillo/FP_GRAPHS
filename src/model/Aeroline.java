@@ -10,13 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+import graphs.util.Edge;
 import graphs.util.GraphAdjacencyList;
 import graphs.util.GraphAdjacencyMatrix;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
-import test.Edge1;
 
 public class Aeroline {
 	
@@ -31,11 +30,14 @@ public class Aeroline {
 		tourList = new GraphAdjacencyList<>(false);
 		tourMatrix = new GraphAdjacencyMatrix<>(false);
 		loadTourData();
-		ArrayList<Edge1> lis = tourMatrix.kruskalMST();
+		ArrayList<Edge<Integer, City, Flight>> lis = tourMatrix.kruskalMST();
 		for (int i = 0; i < lis.size(); i++) {
 			System.out.println(lis.get(i));
 		}
-		
+		ArrayList<Edge<Integer, City, Flight>> liss = tourList.kruskalMST();
+		for (int i = 0; i < liss.size(); i++) {
+			System.out.println(liss.get(i));
+		}
 	}
 	
 	
@@ -75,8 +77,11 @@ public class Aeroline {
 					flights.put(f.getName(), f);
 					tourList.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), 
 							f);
+					
+					tourMatrix.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), 
+							f);
+					
 					f.setIdFrom(Integer.parseInt(s[1])); f.setIdTo(Integer.parseInt(s[2]));
-					tourMatrix.addEdge(Integer.parseInt(s[1]), Integer.parseInt(s[2]), f);
 				}
 	    		
 			br.close();
@@ -137,6 +142,29 @@ public class Aeroline {
 	public GraphAdjacencyMatrix<Integer, City, Flight> getTourMatrix() {
 		return tourMatrix;
 	}
+		
+	
+	public ArrayList<Flight> mstAdyacency(){
+		ArrayList<Edge<Integer, City, Flight>> e = tourList.kruskalMST();
+		ArrayList<Flight> s= new ArrayList<>(); 
+		for (int i = 0; i < e.size(); i++) {
+			s.add(e.get(i).getInfoEdge());
+		}
+		
+		return s;
+	}
+	
+	
+	public ArrayList<Flight> mstMatrix(){
+		ArrayList<Edge<Integer, City, Flight>> e = tourMatrix.kruskalMST();
+		ArrayList<Flight> s= new ArrayList<>(); 
+		for (int i = 0; i < e.size(); i++) {
+			s.add(e.get(i).getInfoEdge());
+		}
+		
+		return s;
+	}
+	
 	
 	
 }

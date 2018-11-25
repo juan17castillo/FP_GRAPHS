@@ -10,33 +10,36 @@ import java.util.Queue;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
-import test.Edge1;
 import graphs.util.Pair;
 
 public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> implements IGraph<K, V, A>{
 
-	private Hashtable<K, V> hashVertex;
+	private Hashtable<K, Vertex<K, V, A>> hashVertex;
 	private Hashtable<K, Integer> hashKeys;
-	private DynamicMatrix matrix;
+	private Hashtable<Integer, K> hashIndex;
+	private DynamicMatrix<K, V, A> matrix;
 	private boolean isDirected;
 	private int[] levels, lessDistance;
 	
 	public GraphAdjacencyMatrix(boolean is) {
 		isDirected = is;
-		matrix = new DynamicMatrix();
+		matrix = new DynamicMatrix<>();
 		hashVertex = new Hashtable<>();
 		hashKeys = new Hashtable<>();
+		hashIndex = new Hashtable<>();
 	}
 	@Override
 	public void addVertex(V element, K key) throws VertexExistException {
-		if(hashVertex.containsKey(key))
+		if(hashVertex.get(key)!=null)
 		{
 			throw new VertexExistException("Vertex already exist", element);
 		}
 		else
 		{
-			hashVertex.put(element.getId(), element);
+			Vertex<K, V, A> v= new Vertex<>(element, key);
+			hashVertex.put(v.getId(), v);
 			hashKeys.put(key, matrix.addElement());
+			hashIndex.put(hashKeys.get(key), key);
 		}
 		
 	}
@@ -52,14 +55,14 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		{
 			throw new VertexDoesnotExistException("Vertex doesn't exist", IdVertexEnd);
 		}
-		if(matrix.get(hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd))!=0)
+		if(matrix.get(hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd))!=null)
 		{
 			throw new EdgeExistException("Edge already exist", IdVertexEnd, IdVertexEnd);
 		}
-		matrix.add(infoEdge.getWeightCost(), hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd));
+		matrix.add(infoEdge, hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd));
 		if(!isDirected)
 		{
-			matrix.add(infoEdge.getWeightCost(), hashKeys.get(IdVertexEnd), hashKeys.get(IdVertexSource));
+			matrix.add(infoEdge, hashKeys.get(IdVertexEnd), hashKeys.get(IdVertexSource));
 		}
 		
 	}
@@ -68,7 +71,7 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 	public void clear() {
 		hashVertex.clear();
 		hashKeys.clear();
-		matrix = new DynamicMatrix();
+		matrix = new DynamicMatrix<>();
 		
 	}
 
@@ -88,7 +91,7 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		{
 			throw new VertexDoesnotExistException("Vertex doesn't exist", VertexEnd);
 		}
-		return matrix.get(hashKeys.get(VertexSource), hashKeys.get(VertexEnd))!=0;
+		return matrix.get(hashKeys.get(VertexSource), hashKeys.get(VertexEnd))!=null;
 		
 	}
 
@@ -102,7 +105,7 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		}
         for (int i = 0; i < matrix.getDimension(); i++) {
 			for (int j = 0; j < matrix.getDimension(); j++) {
-				if(matrix.get(i, j)!=0)
+				if(matrix.get(i, j)!=null)
 				{
 					list.get(i).add(j);
 				}
@@ -134,9 +137,9 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		}
 		for (int i = 0; i < matrix.getDimension(); i++) {
 			for (int j = 0; j < matrix.getDimension(); j++) {
-				if(matrix.get(i, j)!=0)
+				if(matrix.get(i, j)!=null)
 				{
-					list.get(i).add(new Pair<Integer, Integer>(matrix.get(i, j), j));
+					list.get(i).add(new Pair<Integer, Integer>(matrix.get(i, j).getWeight(), j));
 				}
 			}
 		}
@@ -168,15 +171,16 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		}
 	}
 	
-	public ArrayList<Edge1> kruskalMST(){
-		ArrayList<Edge1> graphEdges = new ArrayList<>();
+	public ArrayList<Edge<K, V, A>> kruskalMST(){
+		ArrayList<Edge<K, V, A>> graphEdges = new ArrayList<>();
 		if(isDirected)
 		{
 			for (int i = 0; i < matrix.getDimension(); i++) {
 				for (int j = 0; j < matrix.getDimension(); j++) {
-					if(matrix.get(i, j)!=0)
+					if(matrix.get(i, j)!=null)
 					{
-						graphEdges.add(new Edge1(i, j, matrix.get(i, j)));
+						
+						graphEdges.add(new Edge<K, V, A>(hashVertex.get(hashIndex.get(i)), hashVertex.get(hashIndex.get(j)), matrix.get(i, j)));
 					}
 				}
 			}
@@ -184,21 +188,24 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		else
 		{
 			for (int i = 0; i < matrix.getDimension(); i++) {
+				
 				for (int j = i; j < matrix.getDimension(); j++) {
-					if(matrix.get(i, j)!=0)
+					
+					if(matrix.get(i, j)!=null)
 					{
-						graphEdges.add(new Edge1(i, j, matrix.get(i, j)));
+						
+						graphEdges.add(new Edge<K, V, A>(hashVertex.get(hashIndex.get(i)), hashVertex.get(hashIndex.get(j)), matrix.get(i, j)));
 					}
 				}
 			}
 		}
 		Collections.sort(graphEdges);
-		ArrayList<Edge1> mstEdges = new ArrayList<>();
+		ArrayList<Edge<K, V, A>> mstEdges = new ArrayList<>();
 		DisjointSet nodeSet = new DisjointSet(matrix.getDimension()+1);
 		for(int i=0; i<graphEdges.size() && mstEdges.size()<(matrix.getDimension()-1); i++){
-			Edge1 currentEdge = graphEdges.get(i);
-			int root1 = nodeSet.find(currentEdge.getVertex1());
-			int root2 = nodeSet.find(currentEdge.getVertex2());
+			Edge<K, V, A> currentEdge = graphEdges.get(i);
+			int root1 = nodeSet.find(hashKeys.get(currentEdge.getSourceVertex().getId()));
+			int root2 = nodeSet.find(hashKeys.get(currentEdge.getEndVertex().getId()));
 			if(root1 != root2){
 				mstEdges.add(currentEdge);
 				nodeSet.union(root1, root2);
@@ -211,7 +218,7 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		return hashVertex.isEmpty();
 	}
 
-	public DynamicMatrix getMatrix()
+	public DynamicMatrix<K, V, A> getMatrix()
 	{
 		return matrix;
 	}

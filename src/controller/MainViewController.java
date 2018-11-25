@@ -22,36 +22,25 @@ import com.lynden.gmapsfx.service.directions.TravelModes;
 import com.lynden.gmapsfx.shapes.Polyline;
 import com.lynden.gmapsfx.shapes.PolylineOptions;
 
-
 import java.net.URL;
 import java.util.ArrayList;
-
-import graphs.util.Vertex;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.Callback;
 
 import model.Aeroline;
 import model.City;
@@ -60,8 +49,6 @@ import model.Flight;
 
 public class MainViewController implements Initializable, MapComponentInitializedListener{
 
-
-	
 	private Aeroline a;
 	
 
@@ -70,15 +57,8 @@ public class MainViewController implements Initializable, MapComponentInitialize
     
     private GoogleMap map;
     
-	private ObservableList<String> data;
     
     private ArrayList<Marker> markers;
-
-    @FXML
-    private AnchorPane anchorInit;
-
-    @FXML
-    private AnchorPane anchorApp;
 
     @FXML
     private AnchorPane anchorButtons;
@@ -96,22 +76,21 @@ public class MainViewController implements Initializable, MapComponentInitialize
     private AnchorPane anchorOptions;
 
     @FXML
-    private TableView<String> tableCities;
-
-    @FXML
-    private TableColumn<String, String> columnCities;
-
-    @FXML
-    private Button btnAddCityTable;
-
-    @FXML
-    private Button btnRemoveCityOnTable;
+    private ComboBox<String> comboFrom;
 
     @FXML
     private Button btnGenerateTour;
-    
+
     @FXML
-    private ComboBox<String> comboFrom;
+    private ComboBox<String> comboTo;
+
+    @FXML
+    private Button buttonAddCity;
+
+    @FXML
+    private TextArea txtAreaTo;
+        
+    private HashMap<String, String> to;
 
     @FXML
     void addCityOnTable(ActionEvent event) {
@@ -137,27 +116,91 @@ public class MainViewController implements Initializable, MapComponentInitialize
      		        "Otawa"
      		    );
      	comboFrom.setItems(options);
+     	comboTo.setItems(options);
      	
 
-     	ObservableList<String> data = FXCollections.observableArrayList(
-     			 "Cali",
-  		        "Barcelona",
-  		        "New York",
-  		        "Paris",
-  		        "London",
-  		        "Shangai",
-  		        "Moscu",
-  		        "Amsterdan",
-  		        "Cairo",
-  		        "Otawa");
-     	columnCities.setCellValueFactory(new PropertyValueFactory<String, String>("City"));
-     	columnCities.setCellFactory(ComboBoxTableCell.forTableColumn(data));
-     	tableCities.getItems().add("Cali");
+     	
+    }
+    
+    @FXML
+    void addCityTo(ActionEvent event) {
+    	if(!comboTo.getValue().equals(comboTo.getPromptText())){
+    		
+    		if(!to.containsKey(comboTo.getValue())) {
+    		if(txtAreaTo.getText().equals(txtAreaTo.getPromptText())) {
+    			txtAreaTo.setText(comboTo.getValue());
+    		}else {
+    			txtAreaTo.setText(txtAreaTo.getText()+","+comboTo.getValue());}
+    		
+    		to.put(comboTo.getValue(), "Agregado");
+    		}else {
+    			
+    			Alert alert = new Alert(AlertType.WARNING);
+    			alert.setTitle("Warning Dialog");
+    			alert.setHeaderText("Look");
+    			alert.setContentText("Ya ha agregado tal ciudad");
+
+    			alert.showAndWait();
+    		}
+    	}
+    	
     }
 
     @FXML
-    void generateRamdonToyr(ActionEvent event) {
+    void generateRamdonTour(ActionEvent event) {
+    	
+    	List<String> choices = new ArrayList<>();
+    	choices.add("Tour mas corto");
+    	choices.add("Tour mas economico");
 
+    	ChoiceDialog<String> dialog = new ChoiceDialog<>("Selecciona", choices);
+    	dialog.setTitle("Choice Dialog");
+    	dialog.setHeaderText("Look");
+    	dialog.setContentText("Elige que tipo de tour quieres: ");
+
+    	Optional<String> result = dialog.showAndWait();
+    	if (result.isPresent()){
+    		
+    		MapOptions options = new MapOptions();
+
+            options.center(new LatLong(3.0974571279868752, -76.25453940624999))
+                    .zoomControl(true)
+                    .zoom(2)
+                    .overviewMapControl(false)
+                    .mapTypeControl(false);
+            map = mapView.createMap(options);
+
+    			String mode;
+    		if(result.get().equalsIgnoreCase("Tour mas corto")) {
+    			mode = "distancia en km = ";
+    			a.setDistanceMode(); 
+    		}else {
+    			mode = " costo en usd = ";
+    			a.setCostMode();
+    		}
+    		
+    		String cs = "Se ha agregado un tour compuesto de los siguientes viajes: \n";
+    		ArrayList<Flight> e = a.mstMatrix();
+    		for (int i = 0; i < e.size(); i++) {
+    			City from = a.getCities().get(e.get(i).getIdFrom());
+            	City to = a.getCities().get(e.get(i).getIdTo());
+            	addLine(new LatLong(from.getLatitude(),from.getLongitude()), 
+            			new LatLong(to.getLatitude(), to.getLongitude()));
+                addMarker(new LatLong(from.getLatitude(), from.getLongitude()), from.getName());
+                addMarker(new LatLong(to.getLatitude(), to.getLongitude()), to.getName());
+    			cs+="De "+from.getName()+" a "+to.getName()+". "+mode+e.get(i).getWeight()+"\n";
+
+			}
+    		
+    		Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setTitle("Information Dialog");
+    		alert.setHeaderText(null);
+    		alert.setContentText(cs);
+
+    		alert.showAndWait();
+    	}
+    	
+    	
     }
 
     @FXML
@@ -181,7 +224,7 @@ public class MainViewController implements Initializable, MapComponentInitialize
         mapView.addMapInializedListener(this);
         markers = new ArrayList<Marker>();
         mapView.setKey("AIzaSyBRKd40k8kiVyiLs5EVjl_yUYFmIt-2CHI");
-
+        to = new HashMap<>();
     	a = new Aeroline();
     	
     }

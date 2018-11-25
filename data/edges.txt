@@ -10,6 +10,6 @@ Paris-Moscu,4,7,2883,780
 Paris-Amsterdan,4,8,507,400
 Amsterdam-Moscu,8,7,2435,790
 Amsterdan-Cairo,8,9,5328,1300
-Cali-Cairo,1,9,11502,1500
+Cali-Cairo,1,9,11502,150
 Moscu-Shangai,7,6,6813,1000
 Cairo-Shangai,9,6,8350,1200
