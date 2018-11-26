@@ -109,15 +109,17 @@ public class MainViewController implements Initializable, MapComponentInitialize
      		        "New York",
      		        "Paris",
      		        "London",
-     		        "Shangai",
+     		        "Shanghai",
      		        "Moscu",
-     		        "Amsterdan",
+     		        "Amsterdam",
      		        "Cairo",
-     		        "Otawa"
+     		        "Ottawa"
      		    );
      	comboFrom.setItems(options);
      	comboTo.setItems(options);
-     	
+     	comboFrom.setPromptText("Seleccione");
+     	comboTo.setPromptText("Seleccione");
+
 
      	
     }
@@ -153,7 +155,7 @@ public class MainViewController implements Initializable, MapComponentInitialize
     	choices.add("Tour mas corto");
     	choices.add("Tour mas economico");
 
-    	ChoiceDialog<String> dialog = new ChoiceDialog<>("Selecciona", choices);
+    	ChoiceDialog<String> dialog = new ChoiceDialog<>("Tour mas corto", choices);
     	dialog.setTitle("Choice Dialog");
     	dialog.setHeaderText("Look");
     	dialog.setContentText("Elige que tipo de tour quieres: ");
@@ -180,7 +182,7 @@ public class MainViewController implements Initializable, MapComponentInitialize
     		}
     		
     		String cs = "Se ha agregado un tour compuesto de los siguientes viajes: \n";
-    		ArrayList<Flight> e = a.mstMatrix();
+    		ArrayList<Flight> e = a.mst();
     		for (int i = 0; i < e.size(); i++) {
     			City from = a.getCities().get(e.get(i).getIdFrom());
             	City to = a.getCities().get(e.get(i).getIdTo());
@@ -197,7 +199,7 @@ public class MainViewController implements Initializable, MapComponentInitialize
     		alert.setHeaderText(null);
     		alert.setContentText(cs);
 
-    		alert.showAndWait();
+    		alert.show();
     	}
     	
     	
@@ -205,6 +207,76 @@ public class MainViewController implements Initializable, MapComponentInitialize
 
     @FXML
     void generateTour(ActionEvent event) {
+    	if(comboTo.getValue()!=null&&comboFrom.getValue()!=null && !comboTo.getValue().equalsIgnoreCase(comboTo.getPromptText()) && 
+    			!comboFrom.getValue().equalsIgnoreCase(comboFrom.getPromptText())){
+    		
+    		
+    		List<String> choices = new ArrayList<>();
+        	choices.add("Camino mas corto entre ciudades");
+        	choices.add("Camino mas economico entre ciudades");
+
+        	ChoiceDialog<String> dialog = new ChoiceDialog<>("Camino mas corto entre ciudades", choices);
+        	dialog.setTitle("Choice Dialog");
+        	dialog.setHeaderText("Look");
+        	dialog.setContentText("Elige que tipo de camino quieres: ");
+
+        	Optional<String> result = dialog.showAndWait();
+        	if (result.isPresent() ){
+        		
+        		MapOptions options = new MapOptions();
+
+                options.center(new LatLong(3.0974571279868752, -76.25453940624999))
+                        .zoomControl(true)
+                        .zoom(2)
+                        .overviewMapControl(false)
+                        .mapTypeControl(false);
+                map = mapView.createMap(options);
+
+        			String mode;
+        		if(result.get().equalsIgnoreCase("Camino mas corto entre ciudades")) {
+        			mode = "distancia en km = ";
+        			a.setDistanceMode(); 
+        		}else {
+        			mode = " costo en usd = ";
+        			a.setCostMode();
+        		}
+        		
+        		String cs = "Se ha agregado un camino compuesto de los siguientes viajes: \n";
+        		
+       
+        		ArrayList<Flight> e = a.dijkstra(a.getKey(comboFrom.getValue()), 
+        				a.getKey(comboTo.getValue()));
+        		
+        		
+
+        		for (int i = e.size()-1; i > -1; i--) {
+        			City from = a.getCities().get(e.get(i).getIdFrom());
+                	City to = a.getCities().get(e.get(i).getIdTo());
+                	addLine(new LatLong(from.getLatitude(),from.getLongitude()), 
+                			new LatLong(to.getLatitude(), to.getLongitude()));
+                    addMarker(new LatLong(from.getLatitude(), from.getLongitude()), from.getName());
+                    addMarker(new LatLong(to.getLatitude(), to.getLongitude()), to.getName());
+        			cs+="De "+from.getName()+" a "+to.getName()+". "+mode+e.get(i).getWeight()+"\n";
+
+    			}
+        		
+        		Alert alert = new Alert(AlertType.INFORMATION);
+        		alert.setTitle("Information Dialog");
+        		alert.setHeaderText(null);
+        		alert.setContentText(cs);
+
+        		alert.show();
+        	}
+  
+        	}else {
+        		Alert alert = new Alert(AlertType.WARNING);
+    	 		alert.setTitle("Warning Dialog");
+    	 		alert.setHeaderText("Look");
+    	 		alert.setContentText("Deber seleccionar una ciudad en cada campo");
+    	 		alert.show();
+        		
+        	}
+    		
 
     }
 
@@ -213,19 +285,22 @@ public class MainViewController implements Initializable, MapComponentInitialize
     	System.exit(0);
     }
 
-    @FXML
-    void removeCityOnTable(ActionEvent event) {
-
-    }
+   
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+    	
+    	
+ 		
         mapView.addMapInializedListener(this);
         markers = new ArrayList<Marker>();
         mapView.setKey("AIzaSyBRKd40k8kiVyiLs5EVjl_yUYFmIt-2CHI");
         to = new HashMap<>();
     	a = new Aeroline();
+    	
+    	
+    	 
     	
     }
     
@@ -298,12 +373,46 @@ public class MainViewController implements Initializable, MapComponentInitialize
 		{
         	City from = a.getCities().get(f.getIdFrom());
         	City to = a.getCities().get(f.getIdTo());
-        	System.out.println("Aristica "+from.getName()+" a "+to.getName());
         	addLine(new LatLong(from.getLatitude(),from.getLongitude()), 
         			new LatLong(to.getLatitude(), to.getLongitude()));
 		}
         addLine(new LatLong(3.42158, -76.5205), (new LatLong(41.3922500, 2.1648800)));
-   
+    	
+        Alert alert = new Alert(AlertType.WARNING);
+ 		alert.setTitle("Warning Dialog");
+ 		alert.setHeaderText("Look");
+ 		alert.setContentText("Asegurate de tener actualizado tu Java Runtime Environment"
+ 				+ " para que la interfaz grafica se pueda cargar");
+
+ 		alert.showAndWait();
+        
+        
+    	List<String> choices = new ArrayList<>();
+    	choices.add("Lista de adyacencia");
+    	choices.add("Matriz de adyacencia");
+    
+
+    	ChoiceDialog<String> dialog = new ChoiceDialog<>("Lista de adyacencia", choices);
+    	dialog.setTitle("Choice Dialog");
+    	dialog.setHeaderText("Look");
+    	dialog.setContentText("Elige que tipo de implementacion de grafo quieres: ");
+
+    	
+    	Optional<String> result = dialog.showAndWait();
+    	if (result.isPresent()){
+    		if(result.get().equalsIgnoreCase("Lista de adyacencia")) {
+    			a.setAdyacencyListMode(true);
+    		}else {
+    			a.setAdyacencyListMode(false);
+    		}
+    	}
+    	
+    }
+    
+    @FXML
+    void backToMenu(ActionEvent event) {
+    	anchorButtons.setVisible(true);
+    	anchorOptions.setVisible(false);
     }
 
     

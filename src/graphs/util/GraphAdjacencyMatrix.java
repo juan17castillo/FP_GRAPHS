@@ -59,10 +59,15 @@ public class GraphAdjacencyMatrix<K, V extends IVertex<K>, A extends IEdge> impl
 		{
 			throw new EdgeExistException("Edge already exist", IdVertexEnd, IdVertexEnd);
 		}
+		Edge<K, V, A> edge = new Edge<K, V, A>( hashVertex.get(IdVertexSource), hashVertex.get(IdVertexEnd), infoEdge );
+		hashVertex.get(IdVertexSource).addEdge(edge);
 		matrix.add(infoEdge, hashKeys.get(IdVertexSource), hashKeys.get(IdVertexEnd));
 		if(!isDirected)
 		{
 			matrix.add(infoEdge, hashKeys.get(IdVertexEnd), hashKeys.get(IdVertexSource));
+			Edge<K, V, A> edge1 = new Edge<K, V, A>( hashVertex.get(IdVertexEnd), hashVertex.get(IdVertexSource), infoEdge );
+			hashVertex.get(IdVertexEnd).addEdge(edge1);
+
 		}
 		
 	}

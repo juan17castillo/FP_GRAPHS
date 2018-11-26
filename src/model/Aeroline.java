@@ -9,10 +9,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import graphs.util.Edge;
 import graphs.util.GraphAdjacencyList;
 import graphs.util.GraphAdjacencyMatrix;
+import graphs.util.Vertex;
 import graphs.util.Exceptions.EdgeExistException;
 import graphs.util.Exceptions.VertexDoesnotExistException;
 import graphs.util.Exceptions.VertexExistException;
@@ -24,20 +26,15 @@ public class Aeroline {
 	private GraphAdjacencyList<Integer, City, Flight> tourList;
 	private GraphAdjacencyMatrix<Integer, City, Flight> tourMatrix;
 	
+	private boolean adyacencyListMode;
+	
 	public Aeroline() {
 		cities = new HashMap<Integer, City>();
 		flights = new HashMap<String, Flight>();
 		tourList = new GraphAdjacencyList<>(false);
 		tourMatrix = new GraphAdjacencyMatrix<>(false);
 		loadTourData();
-		ArrayList<Edge<Integer, City, Flight>> lis = tourMatrix.kruskalMST();
-		for (int i = 0; i < lis.size(); i++) {
-			System.out.println(lis.get(i));
-		}
-		ArrayList<Edge<Integer, City, Flight>> liss = tourList.kruskalMST();
-		for (int i = 0; i < liss.size(); i++) {
-			System.out.println(liss.get(i));
-		}
+		
 	}
 	
 	
@@ -55,7 +52,7 @@ public class Aeroline {
 				City c = new City(s[0], Integer.parseInt(s[1])
 						, Double.parseDouble(s[2]), Double.parseDouble(s[3]));
 				
-				cities.put(c.getId(), c);
+				cities.put(Integer.parseInt(s[1]), c);
 				tourList.addVertex(c, Integer.parseInt(s[1]));
 				tourMatrix.addVertex(c, Integer.parseInt(s[1]));
 			}
@@ -143,6 +140,20 @@ public class Aeroline {
 		return tourMatrix;
 	}
 		
+	public ArrayList<Flight> mst(){
+		if(adyacencyListMode) {
+			return mstAdyacency();
+		}
+		return mstMatrix();
+	}
+	
+	
+	public ArrayList<Flight> dijkstra(int idFrom, int idLast){
+		if(adyacencyListMode) {
+			return dijkstraAdyacency(idFrom, idLast);
+		}
+		return dijkstraMatrix(idFrom, idLast);
+	}
 	
 	public ArrayList<Flight> mstAdyacency(){
 		ArrayList<Edge<Integer, City, Flight>> e = tourList.kruskalMST();
@@ -164,7 +175,71 @@ public class Aeroline {
 		
 		return s;
 	}
+
+
+	public void setAdyacencyListMode(boolean adyacencyListMode) {
+		this.adyacencyListMode = adyacencyListMode;
+	}
 	
 	
+	public ArrayList<Flight> dijkstraAdyacency(int idFrom,  int idLast) {
+		HashMap<Integer, Vertex<Integer, City, Flight>> c = tourList.Dijkstra(idFrom);
+		
+		ArrayList<Flight> f = new ArrayList<>();
+		
+		Vertex<Integer, City, Flight> from = c.get(idFrom);
+		Vertex<Integer, City, Flight> last = c.get(idLast);
+		
+		if(from == last.getPred()) {
+			f.add(from.getEdge(idLast).getInfoEdge());
+		}
+		else {
+			while(!(from == last.getPred())) {
+				f.add(last.getPred().getEdge(last.getId()).getInfoEdge());
+				last = last.getPred();
+			}
+			f.add(from.getEdge(last.getId()).getInfoEdge());
+
+		}
+		
+		return f;
+	}
+	
+	
+	public ArrayList<Flight> dijkstraMatrix(int idFrom,  int idLast) {
+		Hashtable<Integer, Vertex<Integer, City, Flight>> c = tourMatrix.Dijkstra(idFrom);
+		
+		ArrayList<Flight> f = new ArrayList<>();
+		
+		Vertex<Integer, City, Flight> from = c.get(idFrom);
+		Vertex<Integer, City, Flight> last = c.get(idLast);
+		
+		if(from == last.getPred()) {
+			f.add(from.getEdge(idLast).getInfoEdge());
+		}
+		else {
+			while(!(from == last.getPred())) {
+				f.add(last.getPred().getEdge(last.getId()).getInfoEdge());
+				last = last.getPred();
+			}
+			f.add(from.getEdge(last.getId()).getInfoEdge());
+
+		}
+		
+		return f;
+	}
+	
+	
+	
+	public int getKey(String name) {
+		
+		for(City c: cities.values()) {
+			if(c.getName().equalsIgnoreCase(name)) {
+				return c.getId();
+			}
+		}
+		
+		return 1;
+	}
 	
 }
